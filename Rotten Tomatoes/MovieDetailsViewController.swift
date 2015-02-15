@@ -18,29 +18,35 @@ class MovieDetailsViewController: UIViewController {
     @IBOutlet var synopsisLabel: UILabel!
     @IBOutlet weak var ratingLabel: UILabel!
     @IBOutlet weak var runtimeLabel: UILabel!
+    @IBOutlet weak var criticsLabel: UILabel!
+    @IBOutlet weak var audienceLabel: UILabel!
     @IBOutlet weak var backgroundView: UIImageView!
+    @IBOutlet weak var loader: UIActivityIndicatorView!
     
     var titleDescription:String!
     var synopsisDescription:String!
     var ratingDescription:String!
     var runtimeDescription:Int!
+    var criticsPercentage:Int!
+    var audiencePercentage:Int!
     var backgroundURL:String!
     override func viewDidLoad() {
         super.viewDidLoad()
-        println("Dsfa")
         // Do any additional setup after loading the view.
+        loader.startAnimating()
         scrollerDescriptionView.addSubview(synopsisLabel)
         scrollerDescriptionView.contentSize = CGSize(width:10, height:10)
         titleLabel.text = self.titleDescription
         synopsisLabel.text = self.synopsisDescription
         ratingLabel.text = self.ratingDescription
         runtimeLabel.text = "\(self.runtimeDescription/60)hr. \(self.runtimeDescription%60)min."
+        criticsLabel.text = "Critics Rating: \(criticsPercentage)%"
+        audienceLabel.text = "Audience Rating: \(audiencePercentage)%"
         backgroundView.setImageWithURL(NSURL(string:backgroundURL))
-        //NSLog("%@", titleDescription)
-            //NSLog("%@", synopsisDescription)
-            //println(titleLabel)
-        
-           }
+        if backgroundView.image != nil{
+            loader.stopAnimating()
+        }
+        }
         //override func didReceiveMemoryWarning() {
        // super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

@@ -8,7 +8,6 @@
 
 import UIKit
 import SystemConfiguration
-
 class ViewController: UITableViewController {
     
     var moviesArray: NSArray?
@@ -28,16 +27,14 @@ class ViewController: UITableViewController {
             ),
             dispatch_get_main_queue(), closure)
     }
-    
     func onRefresh() {
         delay(2, closure: {
-           // self.refreshControl.endRefreshing()
+            self.viewDidAppear(true)
+            self.refreshControl!.endRefreshing()
         })
     }
     override func viewDidAppear(animated:Bool){
         super.viewDidAppear(animated)
-        
-        
         let RottenTomatoesURLString = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?apikey=rmvva9sq5s2tc2amv6db859f"
         let request = NSMutableURLRequest(URL: NSURL(string: RottenTomatoesURLString)!)
         if(isConnectedToNetwork()){
@@ -47,16 +44,13 @@ class ViewController: UITableViewController {
                 &errorValue) as NSDictionary
             self.moviesArray = dictionary["movies"] as? NSArray
             self.tableView.reloadData()
-            
         })
         }
         else{
             println("NO WIFI")
             var networkLabel = UILabel()
-            networkLabel.text = "No Network Connection"
-            //self.addSubView
+            networkLabel.text = "No Network Connection"        }
         }
-    }
         func isConnectedToNetwork() -> Bool {
         
         var zeroAddress = sockaddr_in(sin_len: 0, sin_family: 0, sin_port: 0, sin_addr: in_addr(s_addr: 0), sin_zero: (0, 0, 0, 0, 0, 0, 0, 0))
@@ -96,30 +90,22 @@ class ViewController: UITableViewController {
         var synopsis = movie["synopsis"] as NSString
         cell.movieSynopsis.text = "\(rating) \(synopsis)"
         var link = movie["posters"]!["thumbnail"] as String
+        cell.imageLink = movie["posters"]!["thumbnail"] as String
         let range = Range(start: link.startIndex, end: advance(link.startIndex, 53))
+        cell.loading = true
         cell.posterImage.setImageWithURL(NSURL(string: link.substringWithRange(range) + "ori.jpg"))
-//        var posterImage:UIImage = UIImage(named: link)!
-
+        cell.loading = false
         println(link)
-//        var image = UIImage(CGImage: link)
-//        cell.posterImage.image = image
-        //var posters:NSArray = movie["posters"] as NSArray
-        //cell.movieSynopsis.text = movie["synopsis"] as NSString
-
         return cell
     }
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
 //        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
 //        let details = mainStoryboard.instantiateViewControllerWithIdentifier("movieDetailViewController") as MovieDetailsViewController
-
         //let details = MovieDetailsViewController(nibName: "movieDetailViewController", bundle:nil)
 //        details.titleDescription = "dsf"
 //        details.synopsisDescription = "asdfads"
-    
        //details.updateLabel()
         //details.reloadInputViews()
-        
 //        let movie = self.moviesArray![indexPath.row] as NSDictionary
 //        details.titleDescription = movie["title"] as NSString
 //        details.synopsisDescription = movie["synopsis"] as NSString
@@ -152,15 +138,12 @@ class ViewController: UITableViewController {
             details.synopsisDescription = movie["synopsis"] as NSString
             details.ratingDescription = rating
             details.runtimeDescription = runtime
-            println(year)
-            let a = image.componentsSeparatedByString("_")
-            let b:String = a[1] as NSString
-            let c:Array = b.componentsSeparatedByString(".")
+            details.criticsPercentage = movie["ratings"]!["critics_score"] as NSInteger
+            details.audiencePercentage = movie["ratings"]!["audience_score"] as NSInteger
+            println(details.criticsPercentage)
             let range = Range(start: image.startIndex, end: advance(image.startIndex, 53))
             details.backgroundURL = image.substringWithRange(range) + "ori.jpg"
             println(details.backgroundURL)
-            //println("sdfskdjfnsjdifjsidjflsdfksndflnsjdfnjk\(details.backgroundURL)")
-            //details.backgroundView.setImageWithURL(NSURL(string:image))
         }
     }
 }
