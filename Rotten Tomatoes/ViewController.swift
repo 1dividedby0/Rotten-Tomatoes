@@ -10,10 +10,12 @@ import UIKit
 import SystemConfiguration
 class ViewController: UITableViewController {
     
+    @IBOutlet weak var networkError: UILabel!
     var moviesArray: NSArray?
     var ratingsArray: NSArray?
     override func viewDidLoad() {
         super.viewDidLoad()
+        networkError.hidden = true
         var refreshControl = UIRefreshControl()
         refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: "onRefresh", forControlEvents: UIControlEvents.ValueChanged)
@@ -31,6 +33,11 @@ class ViewController: UITableViewController {
         delay(2, closure: {
             self.viewDidAppear(true)
             self.refreshControl!.endRefreshing()
+            if self.isConnectedToNetwork(){
+            self.networkError.hidden = true
+            }else{
+                self.networkError.hidden = false
+            }
         })
     }
     override func viewDidAppear(animated:Bool){
@@ -48,8 +55,8 @@ class ViewController: UITableViewController {
         }
         else{
             println("NO WIFI")
-            var networkLabel = UILabel()
-            networkLabel.text = "No Network Connection"        }
+            networkError.hidden = false
+        }
         }
         func isConnectedToNetwork() -> Bool {
         
